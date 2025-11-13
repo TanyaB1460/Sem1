@@ -1,5 +1,6 @@
 package com.langexchange.service;
 
+import com.langexchange.dao.SessionDao;
 import com.langexchange.dao.UserDao;
 import com.langexchange.model.User;
 
@@ -7,10 +8,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AuthService {
+    private SessionDao sessionDao;
     private UserDao userDao;
 
-    public AuthService(UserDao userDao) {
+    public AuthService(UserDao userDao, SessionDao sessionDao) {
         this.userDao = userDao;
+        this.sessionDao = sessionDao;
     }
 
     public User authenticate(String username, String password) throws SQLException {
