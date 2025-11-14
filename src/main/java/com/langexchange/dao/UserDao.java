@@ -42,7 +42,7 @@ public class UserDao {
         }
     }
 
-    public void save(User user) throws SQLException {
+    public Long save(User user) throws SQLException {
         String sql = "INSERT INTO users (username, email, password_hash, native_language, learning_language, level) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -58,11 +58,12 @@ public class UserDao {
 
             stmt.executeUpdate();
 
-            // Получаем сгенерированный ID (для PostgreSQL)
+            // Получаем сгенерированный ID
             ResultSet keys = stmt.getGeneratedKeys();
             if (keys.next()) {
-                user.setId(keys.getLong(1));
+                return keys.getLong(1);
             }
+            throw new SQLException("Failed to get generated user ID");
         }
     }
 
@@ -96,7 +97,7 @@ public class UserDao {
                 Interest interest = new Interest();
                 interest.setId(rs.getLong("id"));
                 interest.setName(rs.getString("name"));
-                interest.setCategory(rs.getString("category"));
+                // Убрал category, т.к. его нет в конструкторе Interest
                 interests.add(interest);
             }
         }
@@ -149,5 +150,107 @@ public class UserDao {
         user.setLevel(rs.getString("level"));
         user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         return user;
+    }
+
+    // 🔸 Поиск пользователей по критериям (для поиска партнеров)
+    public List<User> findByCriteria(String nativeLanguage, String learningLanguage,
+                                     List<Long> interestIds, Long excludeUserId) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT DISTINCT u.* FROM users u WHERE 1=1"
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        // Исключаем текущего пользователя
+        if (excludeUserId != null) {
+            sql.append(" AND u.id != ?");
+            params.add(excludeUserId);
+        }
+
+        if (nativeLanguage != null && !nativeLanguage.isEmpty()) {
+            sql.append(" AND u.native_language = ?");
+            params.add(nativeLanguage);
+        }
+
+        if (learningLanguage != null && !learningLanguage.isEmpty()) {
+            sql.append(" AND u.learning_language = ?");
+            params.add(learningLanguage);
+        }
+
+        if (interestIds != null && !interestIds.isEmpty()) {
+            sql.append(" AND u.id IN (SELECT user_id FROM user_interests WHERE interest_id IN (");
+            for (int i = 0; i < interestIds.size(); i++) {
+                if (i > 0) sql.append(",");
+                sql.append("?");
+                params.add(interestIds.get(i));
+            }
+            sql.append("))");
+        }
+
+        sql.append(" ORDER BY u.username");
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            return mapResultSetToUsers(rs);
+        }
+    }
+
+    // 🔸 СТАРАЯ ВЕРСИЯ для обратной совместимости
+    public List<User> findByCriteria(String nativeLanguage, String learningLanguage,
+                                     List<Long> interestIds) throws SQLException {
+        return findByCriteria(nativeLanguage, learningLanguage, interestIds, null);
+    }
+
+    // 🔸 Получение интересов пользователя
+    public List<Interest> findUserInterests(Long userId) throws SQLException {
+        String sql = "SELECT i.* FROM interests i " +
+                "JOIN user_interests ui ON i.id = ui.interest_id " +
+                "WHERE ui.user_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            List<Interest> interests = new ArrayList<>();
+            while (rs.next()) {
+                Interest interest = new Interest();
+                interest.setId(rs.getLong("id"));
+                interest.setName(rs.getString("name"));
+                interests.add(interest);
+            }
+            return interests;
+        }
+    }
+
+    // 🔸 Добавление интереса пользователю
+    public void addUserInterest(Long userId, Long interestId) throws SQLException {
+        String sql = "INSERT INTO user_interests (user_id, interest_id) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, userId);
+            stmt.setLong(2, interestId);
+            stmt.executeUpdate();
+        }
+    }
+
+    // 🔸 Вспомогательный метод для маппинга пользователей
+    private List<User> mapResultSetToUsers(ResultSet rs) throws SQLException {
+        List<User> users = new ArrayList<>();
+        while (rs.next()) {
+            User user = mapResultSetToUser(rs);
+
+            // Загружаем интересы для каждого пользователя
+            user.setInterests(findUserInterests(user.getId()));
+
+            users.add(user);
+        }
+        return users;
     }
 }
