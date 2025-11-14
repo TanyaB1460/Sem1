@@ -23,21 +23,23 @@ public class ApplicationListener implements ServletContextListener {
         try {
             ServletContext context = sce.getServletContext();
 
-            // Инициализация DAO и сервисов...
+            // Инициализация DAO
             UserDao userDao = new UserDao();
             InterestDao interestDao = new InterestDao();
             SessionDao sessionDao = new SessionDao();
 
+            // Инициализация сервисов
             AuthService authService = new AuthService(userDao, sessionDao);
             UserService userService = new UserService(userDao, interestDao);
             SessionService sessionService = new SessionService(sessionDao);
 
+            // Сохраняем сервисы в контекст приложения
             context.setAttribute("authService", authService);
             context.setAttribute("userService", userService);
             context.setAttribute("sessionService", sessionService);
 
-            // Инициализация Freemarker БЕЗ параметра
-            FreemarkerConfig.configure(); // ← убрали context
+            // Инициализация Freemarker
+            FreemarkerConfig.configure();
 
             System.out.println("✅ All services initialized successfully");
 

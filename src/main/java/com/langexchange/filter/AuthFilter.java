@@ -1,18 +1,17 @@
 package com.langexchange.filter;
 
+import com.langexchange.model.User;
+import com.langexchange.service.SessionService;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter("/*")
 public class AuthFilter implements Filter {
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("🔐 AuthFilter initialized");
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -20,30 +19,35 @@ public class AuthFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String path = httpRequest.getRequestURI();
+        HttpSession session = httpRequest.getSession(false);
 
-        // Пропускаем статические ресурсы и страницы аутентификации
-        if (path.startsWith("/css/") || path.startsWith("/js/") ||
-                path.equals("/") || path.equals("/login") || path.equals("/register")) {
+        String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+
+        // Публичные пути, которые доступны без авторизации
+        if (path.startsWith("/login") || path.startsWith("/register") ||
+                path.startsWith("/error") || path.equals("/") || path.equals("/home") ||
+                path.startsWith("/resources") || path.startsWith("/css") || path.startsWith("/js")) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Проверка аутентификации для защищенных путей
-        if (path.contains("/profile") || path.contains("/sessions") ||
-                path.contains("/find-partner") || path.contains("/create-session")) {
-
-            if (httpRequest.getSession().getAttribute("user") == null) {
-                httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
-                return;
-            }
+        // Проверяем авторизацию для защищенных путей
+        if (session != null && session.getAttribute("user") != null) {
+            // Пользователь авторизован
+            chain.doFilter(request, response);
+        } else {
+            // Перенаправляем на страницу логина
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?redirect=" + path);
         }
+    }
 
-        chain.doFilter(request, response);
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println("✅ AuthFilter initialized");
     }
 
     @Override
     public void destroy() {
-        System.out.println("🔐 AuthFilter destroyed");
+        System.out.println("🔚 AuthFilter destroyed");
     }
 }

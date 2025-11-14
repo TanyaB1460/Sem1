@@ -25,6 +25,9 @@ public class FreemarkerConfig {
     }
 
     public static Configuration getConfiguration() {
+        if (cfg == null) {
+            throw new IllegalStateException("Freemarker not configured. Call configure() first.");
+        }
         return cfg;
     }
 }
