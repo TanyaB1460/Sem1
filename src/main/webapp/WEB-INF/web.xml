@@ -2,58 +2,20 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
-                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-         version="6.0">
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
 
-    <display-name>LangExchange - Language Learning Platform</display-name>
+    <display-name>Language Exchange</display-name>
 
-    <!-- Кодировка фильтр -->
-    <filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>com.langexchange.filter.EncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!-- Аутентификация фильтр -->
-    <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>com.langexchange.filter.AuthFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/profile</url-pattern>
-        <url-pattern>/settings</url-pattern>
-        <url-pattern>/search</url-pattern>
-    </filter-mapping>
-
-    <!-- Listeners -->
-    <listener>
-        <listener-class>com.langexchange.listener.ApplicationListener</listener-class>
-    </listener>
-
-    <!-- Session configuration -->
-    <session-config>
-        <session-timeout>30</session-timeout>
-        <cookie-config>
-            <http-only>true</http-only>
-            <secure>false</secure>
-        </cookie-config>
-    </session-config>
-
-    <!-- Welcome files -->
-    <welcome-file-list>
-        <welcome-file>home</welcome-file>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+    <!-- SERVLETS REGISTRATION -->
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>com.langexchange.controller.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
 </web-app>

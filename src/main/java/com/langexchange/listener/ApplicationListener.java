@@ -31,7 +31,7 @@ public class ApplicationListener implements ServletContextListener {
             // Инициализация сервисов
             AuthService authService = new AuthService(userDao, sessionDao);
             UserService userService = new UserService(userDao, interestDao);
-            SessionService sessionService = new SessionService(sessionDao); // 🔸 ИСПРАВЛЕНО
+            SessionService sessionService = new SessionService(sessionDao);
 
             // Сохраняем сервисы в контекст приложения
             context.setAttribute("authService", authService);
@@ -39,7 +39,9 @@ public class ApplicationListener implements ServletContextListener {
             context.setAttribute("sessionService", sessionService);
 
             // Инициализация Freemarker
-            FreemarkerConfig.configure();
+            System.out.println("🔧 Configuring FreeMarker...");
+            FreemarkerConfig.configure(context);
+            System.out.println("✅ FreeMarker configured");
 
             System.out.println("✅ All services initialized successfully");
 
