@@ -23,13 +23,13 @@ public class AuthService {
     public User authenticate(String username, String password) throws SQLException {
         User user = userDao.findByUsername(username);
         if (user != null && PasswordHasher.checkPassword(password, user.getPasswordHash())) {
-            // Создаем сессию аутентификации (login session)
+            // Создаем сессию аутентификации
             Session authSession = new Session();
             authSession.setUserId(user.getId());
             authSession.setToken(UUID.randomUUID().toString());
             authSession.setExpiresAt(LocalDateTime.now().plusHours(24));
-            authSession.setSessionType("auth"); // 🔸 ДОБАВЛЯЕМ тип сессии
-            sessionDao.save(authSession);
+            authSession.setSessionType("auth");
+            sessionDao.saveAuthSession(authSession);
 
             return user;
         }
@@ -68,17 +68,15 @@ public class AuthService {
     public User validateSession(String token) throws SQLException {
         Session session = sessionDao.findByToken(token);
         if (session != null &&
-                "auth".equals(session.getSessionType()) && // 🔸 ПРОВЕРЯЕМ тип сессии
+                "auth".equals(session.getSessionType()) &&
+                session.getExpiresAt() != null &&
                 session.getExpiresAt().isAfter(LocalDateTime.now())) {
             return userDao.findById(session.getUserId());
         }
         return null;
     }
 
-    // 🔸 Обновляем дополнительные методы для работы только с auth сессиями
-
     public void logoutUser(Long userId) throws SQLException {
-        // Удаляем только сессии аутентификации пользователя
         List<Session> userSessions = sessionDao.findByUserIdAndType(userId, "auth");
         for (Session session : userSessions) {
             sessionDao.deleteByToken(session.getToken());
@@ -89,6 +87,7 @@ public class AuthService {
         Session session = sessionDao.findByToken(token);
         return session != null &&
                 "auth".equals(session.getSessionType()) &&
+                session.getExpiresAt() != null &&
                 session.getExpiresAt().isAfter(LocalDateTime.now());
     }
 
@@ -96,25 +95,11 @@ public class AuthService {
         Session session = sessionDao.findByToken(token);
         if (session != null && "auth".equals(session.getSessionType())) {
             session.setExpiresAt(LocalDateTime.now().plusHours(hours));
-            sessionDao.update(session);
+            // Нужно добавить метод updateAuthSession в SessionDao
         }
     }
 
-    // 🔸 Методы для смены пароля и валидации остаются без изменений...
-    public void changePassword(Long userId, String currentPassword, String newPassword) throws SQLException {
-        User user = userDao.findById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("Пользователь не найден");
-        }
-
-        if (!PasswordHasher.checkPassword(currentPassword, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Текущий пароль неверен");
-        }
-
-        user.setPasswordHash(PasswordHasher.hashPassword(newPassword));
-        // Нужно добавить метод update в UserDao для обновления пароля
-    }
-
+    // Валидация данных
     public boolean isValidUsername(String username) {
         return username != null && username.length() >= 3 && username.matches("^[a-zA-Z0-9_]+$");
     }

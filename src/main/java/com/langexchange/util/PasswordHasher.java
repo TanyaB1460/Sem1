@@ -2,7 +2,6 @@ package com.langexchange.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 
 public class PasswordHasher {
@@ -18,6 +17,9 @@ public class PasswordHasher {
     }
 
     public static boolean checkPassword(String password, String hashedPassword) {
+        if (password == null || hashedPassword == null) {
+            return false;
+        }
         return hashPassword(password).equals(hashedPassword);
     }
 }

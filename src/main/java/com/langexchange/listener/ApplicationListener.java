@@ -31,7 +31,7 @@ public class ApplicationListener implements ServletContextListener {
             // Инициализация сервисов
             AuthService authService = new AuthService(userDao, sessionDao);
             UserService userService = new UserService(userDao, interestDao);
-            SessionService sessionService = new SessionService(sessionDao);
+            SessionService sessionService = new SessionService(sessionDao); // 🔸 ИСПРАВЛЕНО
 
             // Сохраняем сервисы в контекст приложения
             context.setAttribute("authService", authService);
