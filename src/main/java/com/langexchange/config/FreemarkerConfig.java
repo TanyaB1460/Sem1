@@ -11,7 +11,7 @@ public class FreemarkerConfig {
     public static void configure(ServletContext context) {
         cfg = new Configuration(Configuration.VERSION_2_3_32);
 
-        // Загрузка шаблонов из classpath (src/main/resources/templates) - ПРАВИЛЬНО!
+        // Загрузка шаблонов из classpath (src/main/resouces/templates)
         cfg.setClassLoaderForTemplateLoading(
                 FreemarkerConfig.class.getClassLoader(),
                 "templates"

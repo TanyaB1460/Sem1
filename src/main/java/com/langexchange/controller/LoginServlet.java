@@ -16,6 +16,7 @@ import java.util.Map;
 @WebServlet("/login")
 public class LoginServlet extends BaseController {
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Показываем форму логина

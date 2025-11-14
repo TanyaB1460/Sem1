@@ -6,12 +6,13 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public abstract class BaseController {
+public abstract class BaseController extends HttpServlet {
     protected void renderTemplate(HttpServletResponse response,
                                   String templateName,
                                   Map<String, Object> data) throws IOException {

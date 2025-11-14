@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet({"/home", "/"})
+@WebServlet("/home")
 public class HomeServlet extends BaseController {
 
     public HomeServlet() {

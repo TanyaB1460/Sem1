@@ -19,6 +19,7 @@ import java.util.Map;
 @WebServlet("/sessions")
 public class SessionServlet extends BaseController {
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

@@ -2,20 +2,20 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
-                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
 
-    <display-name>Language Exchange</display-name>
+    <display-name>LangExchange</display-name>
 
-    <!-- SERVLETS REGISTRATION -->
-    <servlet>
-        <servlet-name>HomeServlet</servlet-name>
-        <servlet-class>com.langexchange.controller.HomeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
+    <!-- Кодировка -->
+    <request-character-encoding>UTF-8</request-character-encoding>
+
+    <!-- Welcome pages -->
+    <welcome-file-list>
+        <welcome-file>home</welcome-file>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
 
 </web-app>

@@ -185,13 +185,6 @@
             animateCounter(document.getElementById('hoursCount'), 8);
         }, 500);
 
-        // Можно добавить AJAX запрос для реальных данных:
-        // fetch('/api/stats')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         animateCounter(document.getElementById('sessionsCount'), data.sessions);
-        //         animateCounter(document.getElementById('partnersCount'), data.partners);
-        //         animateCounter(document.getElementById('hoursCount'), data.hours);
-        //     });
+
     });
 </script>

@@ -18,6 +18,7 @@ import java.util.Map;
 @WebServlet("/search")
 public class SearchServlet extends BaseController {
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
