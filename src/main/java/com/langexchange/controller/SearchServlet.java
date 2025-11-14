@@ -29,6 +29,7 @@ public class SearchServlet extends BaseController {
             Map<String, Object> data = new HashMap<>();
             data.put("title", "Поиск партнеров");
             data.put("interests", userService.getAllInterests());
+            data.put("contextPath", request.getContextPath());
 
             // Если есть параметры поиска - выполняем поиск
             String nativeLanguage = request.getParameter("nativeLanguage");

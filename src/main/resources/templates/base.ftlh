@@ -12,19 +12,19 @@
 <header>
     <div class="container">
         <nav class="navbar">
-            <a href="/" class="logo">🌍 LangExchange</a>
+            <a href="${contextPath!}/" class="logo">🌍 LangExchange</a>
             <ul class="nav-links">
-                <li><a href="/">Главная</a></li>
-                <li><a href="/search">Поиск</a></li>
+                <li><a href="${contextPath!}/">Главная</a></li>
+                <li><a href="${contextPath!}/search">Поиск</a></li>
             </ul>
             <div class="auth-buttons">
                 <#if user??>
                     <span>Привет, ${user.username}!</span>
-                    <a href="/profile" class="btn btn-outline">Профиль</a>
-                    <a href="/logout" class="btn btn-primary">Выйти</a>
+                    <a href="${contextPath!}/profile" class="btn btn-outline">Профиль</a>
+                    <a href="${contextPath!}/logout" class="btn btn-primary">Выйти</a>
                 <#else>
-                    <a href="/login" class="btn btn-outline">Вход</a>
-                    <a href="/register" class="btn btn-primary">Регистрация</a>
+                    <a href="${contextPath!}/login" class="btn btn-outline">Вход</a>
+                    <a href="${contextPath!}/register" class="btn btn-primary">Регистрация</a>
                 </#if>
             </div>
         </nav>

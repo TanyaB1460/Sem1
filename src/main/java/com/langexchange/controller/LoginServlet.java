@@ -22,6 +22,7 @@ public class LoginServlet extends BaseController {
         // Показываем форму логина
         Map<String, Object> data = new HashMap<>();
         data.put("title", "Вход в систему");
+        data.put("contextPath", request.getContextPath());
 
         renderTemplate(response, "login.ftlh", data);
     }

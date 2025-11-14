@@ -28,6 +28,7 @@ public class ProfileServlet extends BaseController {
             data.put("title", "Профиль пользователя");
             data.put("user", user);
             data.put("userInterests", userService.getUserInterests(user.getId()));
+            data.put("contextPath", request.getContextPath());
 
             renderTemplate(response, "profile.ftlh", data);
 

@@ -30,6 +30,7 @@ public class RegisterServlet extends BaseController {
             data.put("title", "Регистрация");
             data.put("interests", userService.getAllInterests());
             renderTemplate(response, "register.ftlh", data);
+            data.put("contextPath", request.getContextPath());
 
         } catch (SQLException e) {
             throw new ServletException("Database error", e);

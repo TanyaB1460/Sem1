@@ -32,6 +32,7 @@ public class SessionServlet extends BaseController {
 
             Map<String, Object> data = new HashMap<>();
             data.put("title", "Мои языковые сессии");
+            data.put("contextPath", request.getContextPath());
 
             if ("create".equals(action)) {
                 // Показываем форму создания сессии

@@ -24,6 +24,7 @@ public class HomeServlet extends BaseController {
         try {
             Map<String, Object> data = new HashMap<>();
             data.put("title", "Главная - LangExchange");
+            data.put("contextPath", request.getContextPath());
 
             Object user = request.getSession().getAttribute("user");
             if (user != null) {
